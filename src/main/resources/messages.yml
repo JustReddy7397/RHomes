@@ -1,0 +1,18 @@
+
+prefix: "&7[&dRHomes&7] &r"
+
+error:
+  already-created: "<prefix>&cYou've already created an home with this name."
+  not-exists: "<prefix>&cAn home with this name doesn't exist."
+  no-permission: "<prefix>&cYou don't have the required permission to run this command."
+  invalid-arguments: "<prefix>&cInvalid arguments! <syntax>"
+
+homes:
+  created: "<prefix>&aSuccessfully created an home with the name: <name>."
+  deleted: "<prefix>&aSuccessfully deleted the home: <name>."
+  unsafe:
+    - "<prefix>&aThis home has unsafe blocks."
+    - "<prefix>&6Unsafe blocks:"
+    - "<prefix>&6<violation>"
+    - "<prefix>&aStill want to go? Type the command again to proceed."
+    - "<prefix>&aThis action will expire in 10 seconds."

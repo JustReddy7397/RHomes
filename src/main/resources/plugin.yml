@@ -1,0 +1,15 @@
+name: RHomes
+version: '${project.version}'
+main: ga.justreddy.wiki.rhomes.RHomes
+authors: [ JustReddy ]
+description: Home Plugin
+commands:
+  homes:
+    aliases:
+      - rhomes
+      - home
+libraries:
+  - org.xerial:sqlite-jdbc:3.34.0
+  - org.mongodb:mongodb-driver:3.12.11
+  - org.mongodb:mongodb-driver-core:3.12.11
+  - org.mongodb:bson:3.12.11
