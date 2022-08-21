@@ -39,6 +39,12 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>net.wesjd.anvilgui</pattern>
+                  <shadedPattern>ga.justreddy.wiki.rhomes.libs.anvilgui</shadedPattern>
+                </relocation>
+              </relocations>
               <createDependencyReducedPom>false</createDependencyReducedPom>
             </configuration>
           </execution>
@@ -62,9 +68,22 @@
       <id>sonatype</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
+    <repository>
+      <id>skullcreator-repo</id>
+      <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
+    </repository>
+    <repository>
+      <id>codemc-snapshots</id>
+      <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+    </repository>
   </repositories>
 
   <dependencies>
+    <dependency>
+      <groupId>net.wesjd</groupId>
+      <artifactId>anvilgui</artifactId>
+      <version>1.5.3-SNAPSHOT</version>
+    </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
@@ -101,5 +120,11 @@
       <artifactId>XSeries</artifactId>
       <version>9.0.0</version>
     </dependency>
+<!--    <dependency>
+      <groupId>dev.dbassett</groupId>
+      <artifactId>skullcreator</artifactId>
+      <version>3.0.1</version>
+      <scope>compile</scope>
+    </dependency>-->
   </dependencies>
 </project>

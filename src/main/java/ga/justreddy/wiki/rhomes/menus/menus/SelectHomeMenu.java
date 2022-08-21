@@ -73,6 +73,8 @@ public class SelectHomeMenu extends AbstractPaginatedMenu {
               lore.add("  &aZ: " + Math.round(location.getZ()));
               lore.add("");
               lore.add("&7Date created: " + Utils.getFormattedDate(home.getCreated()));
+              lore.add("&7Private: " + (home.isPrivate() ? "&aYes" : "&cNo"));
+              lore.add("&8Please know that if your home is not private, anyone can visit it.");
               lore.add("&6%line%");
               meta.setLore(Utils.format(lore));
               itemStack.setItemMeta(meta);

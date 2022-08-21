@@ -16,3 +16,7 @@ homes:
     - "<prefix>&6<violation>"
     - "<prefix>&aStill want to go? Type the command again to proceed."
     - "<prefix>&aThis action will expire in 10 seconds."
+  blacklist-add: "<prefix>&aSuccessfully added <player> to your homes blacklist"
+  blacklist-remove: "<prefix>&aSuccessfully removed <player> from your homes blacklist"
+  renamed: "<prefix>&aSuccessfully renamed your home to: <name>"
+  renamed-displayname: "<prefix>&aSuccessfully set your homes displayname to: <displayname>"

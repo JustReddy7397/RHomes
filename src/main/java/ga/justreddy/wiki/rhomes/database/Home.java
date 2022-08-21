@@ -1,5 +1,6 @@
 package ga.justreddy.wiki.rhomes.database;
 
+import ga.justreddy.wiki.rhomes.utils.Cuboid;
 import lombok.Data;
 
 @Data

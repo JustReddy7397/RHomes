@@ -88,9 +88,10 @@ public class BaseCommand implements TabExecutor {
         return list;
       }else if (args[0].equalsIgnoreCase("setprivate")) {
         List<String> list = new ArrayList<>();
-        list.add("true");
-        list.add("false");
-        return  list;
+        for (int i = 0; i < RHomes.getHomes().getDatabase().getHomes(player).size(); i++) {
+          list.add(RHomes.getHomes().getDatabase().getHomes(player).get(i).getName());
+        }
+        return list;
       }
     }
     return null;

@@ -7,8 +7,10 @@ import com.mongodb.client.MongoDatabase;
 import ga.justreddy.wiki.rhomes.utils.Utils;
 import ga.justreddy.wiki.rhomes.RHomes;
 import java.util.List;
+import java.util.UUID;
 import org.bson.Document;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class MongoDB implements Database {
@@ -22,7 +24,7 @@ public class MongoDB implements Database {
   }
 
   @Override
-  public void createDatabase() {
+  public void loadData() {
     // Empty Block
   }
 
@@ -80,7 +82,32 @@ public class MongoDB implements Database {
   }
 
   @Override
+  public void addPlayerToBlackList(String name, Player player, OfflinePlayer target) {
+
+  }
+
+  @Override
+  public void removePlayerFromBlackList(String name, Player player, OfflinePlayer target) {
+
+  }
+
+  @Override
+  public void renameHome(String name, Player player, String newName) {
+
+  }
+
+  @Override
+  public void setDisplayName(String name, Player player, String newDisplayName) {
+
+  }
+
+  @Override
   public List<Home> getHomes(Player player) {
+    return null;
+  }
+
+  @Override
+  public List<UUID> getBlacklisted(String name, Player player) {
     return null;
   }
 }

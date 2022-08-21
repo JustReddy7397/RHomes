@@ -1,5 +1,6 @@
 package ga.justreddy.wiki.rhomes;
 
+import com.google.common.collect.Table;
 import ga.justreddy.wiki.rhomes.config.YamlConfig;
 import ga.justreddy.wiki.rhomes.database.Database;
 import ga.justreddy.wiki.rhomes.database.MongoDB;
@@ -12,7 +13,9 @@ import ga.justreddy.wiki.rhomes.utils.Utils;
 import ga.justreddy.wiki.rhomes.command.BaseCommand;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.command.PluginCommand;
@@ -60,10 +63,10 @@ public final class RHomes extends JavaPlugin {
     } else {
       database = new SQLite();
     }
-    database.createDatabase();
+    database.loadData();
     getCommand("homes").setExecutor(new BaseCommand());
     getCommand("homes").setTabCompleter(new BaseCommand());
-    this.teleportList = new ArrayList<>();
+    this.teleportList = new ArrayList<>();;
     getServer().getPluginManager().registerEvents(new MenuEvent(), this);
   }
 
