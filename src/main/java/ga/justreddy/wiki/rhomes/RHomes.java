@@ -3,6 +3,7 @@ package ga.justreddy.wiki.rhomes;
 import com.google.common.collect.Table;
 import ga.justreddy.wiki.rhomes.config.YamlConfig;
 import ga.justreddy.wiki.rhomes.database.Database;
+import ga.justreddy.wiki.rhomes.database.Home;
 import ga.justreddy.wiki.rhomes.database.MongoDB;
 import ga.justreddy.wiki.rhomes.database.MySQL;
 import ga.justreddy.wiki.rhomes.database.SQLite;
@@ -37,6 +38,9 @@ public final class RHomes extends JavaPlugin {
   @Getter
   private List<UUID> teleportList;
 
+  @Getter
+  private List<Home> homeList;
+
   @Override
   public void onLoad() {
     try{
@@ -52,7 +56,6 @@ public final class RHomes extends JavaPlugin {
 
   @Override
   public void onEnable() {
-    // Plugin startup logic
     if (!loadConfigs()) return;
     if (databaseConfig.getConfig().getString("storage").equalsIgnoreCase("sql")) {
       database = new SQLite();
@@ -67,13 +70,14 @@ public final class RHomes extends JavaPlugin {
     getCommand("homes").setExecutor(new BaseCommand());
     getCommand("homes").setTabCompleter(new BaseCommand());
     this.teleportList = new ArrayList<>();;
+    this.homes = new ArrayList<>();
     getServer().getPluginManager().registerEvents(new MenuEvent(), this);
   }
 
   @Override
   public void onDisable() {
-    // Plugin shutdown logic
     teleportList.clear();
+    homes.clear();
   }
 
   public static RHomes getHomes() {

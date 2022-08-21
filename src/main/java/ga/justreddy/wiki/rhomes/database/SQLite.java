@@ -46,9 +46,37 @@ public class SQLite implements Database {
                 + " private BOOLEAN(100), "
                 + "created LONG(100),"
                 + "blacklisted LONGTEXT,"
-                + "cuboid LONGTEXT)");
+                + "highbound VARCHAR(100),"
+                + "lowbound VARCHAR(100))");
 
     // TODO
+    ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM r_homes");
+
+    while (resultSet.next()) {
+
+      String highBound = resultSet.getString("highbound");
+      String lowBound = resultSet.getString("lowbound");
+
+      Cuboid cuboid = null;
+      if (lowBound != null && highBound != null) {
+        Location highBoundLocation = Utils.getLocation(highBound);
+        Location lowBoundLocation = Utils.getLocation(lowBound);
+        cuboid = new Cuboid(UUID.fromString(resultSet.getString("uuid")), highBoundLocation, lowBoundLocation);
+      }
+
+      Home home = new Home(
+          resultSet.getString("name"),
+          resultSet.getString("displayname"),
+          resultSet.getString("uuid"),
+          resultSet.getString("location"),
+          resultSet.getBoolean("private"),
+          resultSet.getLong("created")
+      );
+      home.setClaimArea(cuboid);
+      RHomes.getHomes().getHomeList()
+          .add(home);
+    }
+
 
   }
 
@@ -324,14 +352,26 @@ public class SQLite implements Database {
             .executeQuery(
                 "SELECT * FROM r_homes WHERE uuid='" + player.getUniqueId().toString() + "'");
     while (rs.next()) {
+      String highBound = rs.getString("highbound");
+      String lowBound = rs.getString("lowbound");
+
+      Cuboid cuboid = null;
+      if (lowBound != null && highBound != null) {
+        Location highBoundLocation = Utils.getLocation(highBound);
+        Location lowBoundLocation = Utils.getLocation(lowBound);
+        cuboid = new Cuboid(UUID.fromString(rs.getString("uuid")), highBoundLocation, lowBoundLocation);
+      }
+      Home home = new Home(
+          rs.getString("name"),
+          rs.getString("displayname"),
+          rs.getString("uuid"),
+          rs.getString("location"),
+          rs.getBoolean("private"),
+          rs.getLong("created"));
+      home.setClaimArea(cuboid);
       list.add(
-          new Home(
-              rs.getString("name"),
-              rs.getString("displayname"),
-              rs.getString("uuid"),
-              rs.getString("location"),
-              rs.getBoolean("private"),
-              rs.getLong("created")));
+          home
+      );
     }
     return list;
   }

@@ -1,3 +1,7 @@
+
+home-protection:
+  enabled: true
+
 bad-blocks:
   enabled: true
   radius: 3 # Scans for 3 blocks around the location
