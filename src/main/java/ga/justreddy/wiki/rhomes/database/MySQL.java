@@ -59,6 +59,26 @@ public class MySQL implements Database {
   }
 
   @Override
+  public void setHighBound(String name, Player player, String highBound) {
+
+  }
+
+  @Override
+  public void setLowBound(String name, Player player, String lowBound) {
+
+  }
+
+  @Override
+  public void setClaimArea(String name, Player player) {
+
+  }
+
+  @Override
+  public Home getHomeByName(String name, Player player) {
+    return null;
+  }
+
+  @Override
   public List<Home> getHomes(Player player) {
     return null;
   }

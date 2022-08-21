@@ -50,4 +50,17 @@ public class AnvilMenu {
         .open(player);
   }
 
+  public static void removeBlacklistedPlayer(String name, Player player) {
+    new AnvilGUI.Builder()
+        .onComplete((p, blacklistedPlayer) -> {
+          RHomes.getHomes().getDatabase().removePlayerFromBlackList(name, p, Bukkit.getOfflinePlayer(blacklistedPlayer));
+          return AnvilGUI.Response.close();
+        })
+        .itemLeft(XMaterial.PAPER.parseItem())
+        .title(Utils.format("&aRemove a player from your homes blacklist"))
+        .text("Remove someone from your homes blacklist")
+        .plugin(RHomes.getHomes())
+        .open(player);
+  }
+
 }

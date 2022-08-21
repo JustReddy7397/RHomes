@@ -25,7 +25,7 @@ public class BaseCommand implements TabExecutor {
   public BaseCommand() {
     addCommands(new CreateCommand(), new DeleteCommand(), new TeleportCommand(), new SetPrivateCommand(), new EditCommand());
     for (ICommand command : commands) {
-      if (Bukkit.getPluginManager().getPermission(command.permission()) == null) {
+      if (command.permission() != null && Bukkit.getPluginManager().getPermission(command.permission()) == null) {
         Bukkit.getPluginManager().addPermission(new Permission(command.permission()));
       }
     }
@@ -40,7 +40,7 @@ public class BaseCommand implements TabExecutor {
     if (args.length > 0) {
       for (ICommand cmd : commands) {
         if (cmd.name().equals(args[0])) {
-          if (!player.hasPermission(cmd.permission())) {
+          if (cmd.permission() != null && !player.hasPermission(cmd.permission())) {
             Utils.sendMessage(
                 player,
                 RHomes.getHomes().getMessagesConfig().getConfig().getString("error.no-permission"));

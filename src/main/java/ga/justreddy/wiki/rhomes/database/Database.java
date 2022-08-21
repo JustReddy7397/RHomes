@@ -28,6 +28,14 @@ public interface Database {
 
   void setDisplayName(String name, Player player, String newDisplayName);
 
+  void setHighBound(String name, Player player, String highBound);
+
+  void setLowBound(String name, Player player, String lowBound);
+
+  void setClaimArea(String name, Player player);
+
+  Home getHomeByName(String name, Player player);
+
   List<Home> getHomes(Player player);
 
   List<UUID> getBlacklisted(String name, Player player);

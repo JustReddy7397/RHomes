@@ -7,6 +7,11 @@ error:
   no-permission: "<prefix>&cYou don't have the required permission to run this command."
   invalid-arguments: "<prefix>&cInvalid arguments! <syntax>"
 
+protection:
+  block-break: "<prefix>&cYou aren't allowed to break blocks in <player>'s home."
+  block-place: "<prefix>&cYou aren't allowed to place blocks in <player>'s home."
+  interact: "<prefix>&cYou aren't allowed to interact with <interaction> in <player>'s home."
+
 homes:
   created: "<prefix>&aSuccessfully created an home with the name: <name>."
   deleted: "<prefix>&aSuccessfully deleted the home: <name>."

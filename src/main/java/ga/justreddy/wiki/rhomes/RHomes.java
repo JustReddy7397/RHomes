@@ -9,6 +9,7 @@ import ga.justreddy.wiki.rhomes.database.MySQL;
 import ga.justreddy.wiki.rhomes.database.SQLite;
 import ga.justreddy.wiki.rhomes.dependency.DLoader;
 import ga.justreddy.wiki.rhomes.dependency.base.Dependency;
+import ga.justreddy.wiki.rhomes.listeners.HomeListener;
 import ga.justreddy.wiki.rhomes.menus.MenuEvent;
 import ga.justreddy.wiki.rhomes.utils.Utils;
 import ga.justreddy.wiki.rhomes.command.BaseCommand;
@@ -57,6 +58,7 @@ public final class RHomes extends JavaPlugin {
   @Override
   public void onEnable() {
     if (!loadConfigs()) return;
+    this.homeList = new ArrayList<>();
     if (databaseConfig.getConfig().getString("storage").equalsIgnoreCase("sql")) {
       database = new SQLite();
     } else if (databaseConfig.getConfig().getString("storage").equalsIgnoreCase("mysql")) {
@@ -70,14 +72,14 @@ public final class RHomes extends JavaPlugin {
     getCommand("homes").setExecutor(new BaseCommand());
     getCommand("homes").setTabCompleter(new BaseCommand());
     this.teleportList = new ArrayList<>();;
-    this.homes = new ArrayList<>();
     getServer().getPluginManager().registerEvents(new MenuEvent(), this);
+    //getServer().getPluginManager().registerEvents(new HomeListener(), this);
   }
 
   @Override
   public void onDisable() {
     teleportList.clear();
-    homes.clear();
+    homeList.clear();
   }
 
   public static RHomes getHomes() {

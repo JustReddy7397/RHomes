@@ -344,6 +344,69 @@ public class SQLite implements Database {
 
   @SneakyThrows
   @Override
+  public void setHighBound(String name, Player player, String highBound) {
+    if (!doesHomeExist(name, player)) {
+      Utils.sendMessage(
+          player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
+      return;
+    }
+
+    connection.createStatement().executeUpdate(
+        "UPDATE r_homes SET highbound='"+highBound+"' WHERE name='"+name+"' AND uuid='"+player.getUniqueId().toString()+"'"
+    );
+
+    player.sendMessage("Highbound set");
+  }
+
+  @SneakyThrows
+  @Override
+  public void setLowBound(String name, Player player, String lowBound) {
+    if (!doesHomeExist(name, player)) {
+      Utils.sendMessage(
+          player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
+      return;
+    }
+
+    connection.createStatement().executeUpdate(
+        "UPDATE r_homes SET lowbound='"+lowBound+"' WHERE name='"+name+"' AND uuid='"+player.getUniqueId().toString()+"'"
+    );
+
+    player.sendMessage("Lowbound set");
+  }
+
+  @SneakyThrows
+  @Override
+  public void setClaimArea(String name, Player player) {
+    if (!doesHomeExist(name, player)) {
+      Utils.sendMessage(
+          player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
+      return;
+    }
+    ResultSet rs =
+        connection
+            .createStatement()
+            .executeQuery(
+                "SELECT * FROM r_homes WHERE uuid='"
+                    + player.getUniqueId().toString()
+                    + "' AND name='"
+                    + name
+                    + "'");
+
+    Location highBound = Utils.getLocation(rs.getString("highbound"));
+    Location lowBound = Utils.getLocation(rs.getString("lowbound"));
+    Cuboid cuboid = new Cuboid(player.getUniqueId(), highBound, lowBound);
+    Home home = getHomeByName(name, player);
+    home.setClaimArea(cuboid);
+    System.out.println("Cuboid set");
+  }
+
+  @Override
+  public Home getHomeByName(String name, Player player) {
+    return getHomes(player).stream().filter(home1 -> home1.getName().equals(name)).findFirst().orElse(null);
+  }
+
+  @SneakyThrows
+  @Override
   public List<Home> getHomes(Player player) {
     List<Home> list = new ArrayList<>();
     ResultSet rs =
