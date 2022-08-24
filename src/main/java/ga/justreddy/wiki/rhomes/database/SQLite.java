@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -92,14 +93,16 @@ public class SQLite implements Database {
 
     PreparedStatement statement =
         connection.prepareStatement(
-            "INSERT INTO r_homes (uuid, name, displayname, location, private, created, blacklisted) VALUES (?,?,?,?,?,?,?)");
+            "INSERT INTO r_homes (uuid, name, displayname, location, private, created, blacklisted, highbound, lowbound) VALUES (?,?,?,?,?,?,?,?,?)");
     statement.setString(1, player.getUniqueId().toString());
     statement.setString(2, name);
     statement.setString(3, name);
     statement.setString(4, Utils.toLocation(location));
-    statement.setBoolean(5, false);
+    statement.setBoolean(5, true);
     statement.setLong(6, new Date().getTime());
     statement.setString(7, "");
+    statement.setString(8, "");
+    statement.setString(9, "");
     statement.executeUpdate();
     statement.close();
     Utils.sendMessage(
@@ -109,6 +112,15 @@ public class SQLite implements Database {
             .getConfig()
             .getString("homes.created")
             .replaceAll("<name>", name));
+    Home home = new Home(
+        name,
+        name,
+        player.getUniqueId().toString(),
+        Utils.toLocation(location),
+         true,
+        new Date().getTime()
+    );
+    RHomes.getHomes().getHomeList().add(home);
   }
 
   @SneakyThrows
@@ -138,6 +150,7 @@ public class SQLite implements Database {
             .replaceAll("<name>", name));
   }
 
+  @SneakyThrows
   @Override
   public void setPrivate(String name, Player player, boolean _private) {
     if (!doesHomeExist(name, player)) {
@@ -145,11 +158,30 @@ public class SQLite implements Database {
           player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
       return;
     }
+
+    connection
+        .createStatement()
+        .executeUpdate("UPDATE r_homes SET private='"+_private+"' WHERE name='"+name+"' AND uuid='"+player.getUniqueId().toString()+"'");
+
+    Utils.sendMessage(
+        player,
+        RHomes.getHomes()
+            .getMessagesConfig()
+            .getConfig()
+            .getString("homes.private")
+            .replaceAll("<private>", (_private ? "private" : "public")));
+    Home home =
+        RHomes.getHomes().getHomeList().stream()
+            .filter(h -> h.getName().equals(name))
+            .findFirst()
+            .get();
+
+    home.setPrivate(_private);
   }
 
   @SneakyThrows
   @Override
-  public boolean doesHomeExist(String name, Player player) {
+  public boolean doesHomeExist(String name, OfflinePlayer player) {
     ResultSet rs =
         connection
             .createStatement()
@@ -164,8 +196,23 @@ public class SQLite implements Database {
 
   @SneakyThrows
   @Override
-  public void teleportToHome(String name, Player player) {
-    if (!doesHomeExist(name, player)) {
+  public boolean isPrivate(String name, OfflinePlayer player) {
+    ResultSet rs =
+        connection
+            .createStatement()
+            .executeQuery(
+                "SELECT * FROM r_homes WHERE uuid='"
+                    + player.getUniqueId().toString()
+                    + "' AND name='"
+                    + name
+                    + "'");
+    return rs.getBoolean("private");
+  }
+
+  @SneakyThrows
+  @Override
+  public void teleportToHome(String name, Player player, OfflinePlayer homeOwner) {
+    if (!doesHomeExist(name, homeOwner)) {
       Utils.sendMessage(
           player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
       return;
@@ -176,11 +223,25 @@ public class SQLite implements Database {
             .createStatement()
             .executeQuery(
                 "SELECT * FROM r_homes WHERE uuid='"
-                    + player.getUniqueId().toString()
+                    + homeOwner.getUniqueId().toString()
                     + "' AND name='"
                     + name
                     + "'");
 
+
+    String[] blackListedUsers = rs.getString("blacklisted").split(";");
+
+    for (String uuid : blackListedUsers) {
+      if (uuid.equals(player.getUniqueId().toString())) {
+        Utils.sendMessage(player, RHomes.getHomes().getMessagesConfig().getConfig().getString("homes.blacklisted"));
+        return;
+      }
+    }
+
+    if (isPrivate(name, homeOwner) && !rs.getString("uuid").equals(player.getUniqueId().toString())) {
+      // TODO
+      return;
+    }
     Location location = Utils.getLocation(rs.getString("location"));
 
     if (!Utils.isLocationSafe(location)
@@ -315,6 +376,12 @@ public class SQLite implements Database {
 
     Utils.sendMessage(
         player, RHomes.getHomes().getMessagesConfig().getConfig().getString("homes.renamed").replaceAll("<name>", newName));
+    Home home =
+        RHomes.getHomes().getHomeList().stream()
+            .filter(h -> h.getName().equals(name))
+            .findFirst()
+            .get();
+    home.setName(newName);
   }
 
   @SneakyThrows
@@ -339,7 +406,12 @@ public class SQLite implements Database {
 
     Utils.sendMessage(
         player, RHomes.getHomes().getMessagesConfig().getConfig().getString("homes.renamed-displayname").replaceAll("<displayname>", newDisplayName));
-
+    Home home =
+        RHomes.getHomes().getHomeList().stream()
+            .filter(h -> h.getName().equals(name))
+            .findFirst()
+            .get();
+    home.setDisplayName(newDisplayName);
   }
 
   @SneakyThrows

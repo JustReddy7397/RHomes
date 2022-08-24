@@ -1,12 +1,22 @@
 package ga.justreddy.wiki.rhomes.database;
 
+import ga.justreddy.wiki.rhomes.RHomes;
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.yaml.snakeyaml.Yaml;
 
-public class MySQL implements Database {
+public class YAML implements Database {
+
+  private final File file;
+
+  public YAML() {
+    file = new File(RHomes.getHomes().getDataFolder().getAbsolutePath() + "/data/storage");
+    if (!file.exists()) file.mkdir();
+  }
 
   @Override
   public void loadData() {
@@ -40,6 +50,7 @@ public class MySQL implements Database {
 
   @Override
   public void teleportToHome(String name, Player player, OfflinePlayer homeOwner) {
+
   }
 
   @Override

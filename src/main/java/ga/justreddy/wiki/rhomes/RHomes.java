@@ -1,26 +1,23 @@
 package ga.justreddy.wiki.rhomes;
 
-import com.google.common.collect.Table;
+import ga.justreddy.wiki.rhomes.command.BaseCommand;
 import ga.justreddy.wiki.rhomes.config.YamlConfig;
 import ga.justreddy.wiki.rhomes.database.Database;
 import ga.justreddy.wiki.rhomes.database.Home;
 import ga.justreddy.wiki.rhomes.database.MongoDB;
 import ga.justreddy.wiki.rhomes.database.MySQL;
 import ga.justreddy.wiki.rhomes.database.SQLite;
+import ga.justreddy.wiki.rhomes.database.YAML;
 import ga.justreddy.wiki.rhomes.dependency.DLoader;
 import ga.justreddy.wiki.rhomes.dependency.base.Dependency;
 import ga.justreddy.wiki.rhomes.listeners.HomeListener;
 import ga.justreddy.wiki.rhomes.menus.MenuEvent;
 import ga.justreddy.wiki.rhomes.utils.Utils;
-import ga.justreddy.wiki.rhomes.command.BaseCommand;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -65,6 +62,8 @@ public final class RHomes extends JavaPlugin {
       database = new MySQL();
     } else if (databaseConfig.getConfig().getString("storage").equalsIgnoreCase("mongodb")) {
       database = new MongoDB(databaseConfig.getConfig().getString("mongo.uri"));
+      } else if (databaseConfig.getConfig().getString("storage").equalsIgnoreCase("yaml")) {
+      database = new YAML();
     } else {
       database = new SQLite();
     }
@@ -73,7 +72,7 @@ public final class RHomes extends JavaPlugin {
     getCommand("homes").setTabCompleter(new BaseCommand());
     this.teleportList = new ArrayList<>();;
     getServer().getPluginManager().registerEvents(new MenuEvent(), this);
-    //getServer().getPluginManager().registerEvents(new HomeListener(), this);
+    getServer().getPluginManager().registerEvents(new HomeListener(), this);
   }
 
   @Override

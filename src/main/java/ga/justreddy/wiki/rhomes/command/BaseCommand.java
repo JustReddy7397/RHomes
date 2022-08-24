@@ -4,8 +4,11 @@ import ga.justreddy.wiki.rhomes.RHomes;
 import ga.justreddy.wiki.rhomes.command.commands.CreateCommand;
 import ga.justreddy.wiki.rhomes.command.commands.DeleteCommand;
 import ga.justreddy.wiki.rhomes.command.commands.EditCommand;
+import ga.justreddy.wiki.rhomes.command.commands.ReloadCommand;
 import ga.justreddy.wiki.rhomes.command.commands.SetPrivateCommand;
 import ga.justreddy.wiki.rhomes.command.commands.TeleportCommand;
+import ga.justreddy.wiki.rhomes.command.commands.TestCommand;
+import ga.justreddy.wiki.rhomes.command.commands.VisitCommand;
 import ga.justreddy.wiki.rhomes.utils.Utils;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +26,7 @@ public class BaseCommand implements TabExecutor {
   @Getter private static final List<ICommand> commands = new ArrayList<>();
 
   public BaseCommand() {
-    addCommands(new CreateCommand(), new DeleteCommand(), new TeleportCommand(), new SetPrivateCommand(), new EditCommand());
+    addCommands(new CreateCommand(), new DeleteCommand(), new TeleportCommand(), new SetPrivateCommand(), new EditCommand(), new VisitCommand(), new ReloadCommand(), new TestCommand());
     for (ICommand command : commands) {
       if (command.permission() != null && Bukkit.getPluginManager().getPermission(command.permission()) == null) {
         Bukkit.getPluginManager().addPermission(new Permission(command.permission()));
@@ -35,6 +38,7 @@ public class BaseCommand implements TabExecutor {
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
     if (!(sender instanceof Player)) return true;
+
 
     Player player = (Player) sender;
     if (args.length > 0) {

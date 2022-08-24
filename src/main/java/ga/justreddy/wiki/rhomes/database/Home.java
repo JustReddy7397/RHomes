@@ -8,14 +8,16 @@ import lombok.Setter;
 public class Home {
 
   @Getter
-  private final String name;
+  @Setter
+  private String name;
   @Getter
-  private final String displayName;
+  @Setter
+  private String displayName;
   @Getter
   private final String uuid;
   @Getter
   private final String location;
-  private final boolean _private;
+  private boolean _private;
   @Getter
   private final long created;
   @Getter
@@ -31,9 +33,12 @@ public class Home {
     this.created = created;
   }
 
-
   public boolean isPrivate() {
     return _private;
+  }
+
+  public void setPrivate(boolean _private) {
+    this._private = _private;
   }
 
 }

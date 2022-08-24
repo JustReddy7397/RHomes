@@ -1,16 +1,18 @@
 package ga.justreddy.wiki.rhomes.utils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-/**
- * Used for protection
- */
-
+/** Used for protection */
 @Getter
 public class Cuboid {
 
@@ -24,6 +26,7 @@ public class Cuboid {
   private final int x2;
   private final int y2;
   private final int z2;
+  private final Set<Chunk> chunks;
 
   public Cuboid(UUID owner, Location highPoints, Location lowPoints) {
     this.owner = owner;
@@ -36,6 +39,20 @@ public class Cuboid {
     this.z2 = Math.max(highPoints.getBlockZ(), lowPoints.getBlockZ());
     this.highPoints = new Location(this.world, this.x2, this.y2, this.z2);
     this.lowPoints = new Location(this.world, this.x1, this.y1, this.z1);
+    this.chunks = new HashSet<>();
+    for (int x = x1; x < x2; x++) {
+      for (int y = y1; y < y2; y++) {
+        for (int z = z1; z < z2; z++) {
+          Chunk chunk = world.getChunkAt(x, z);
+          if (!chunk.isLoaded()) chunk.load();
+          chunks.add(chunk);
+        }
+      }
+    }
+    System.out.println(
+
+        "x1: " + x1 + "\ny1:" + y1 + "\nz1:" + z1 +  "x2: " + x2 + "\ny2:" + y2 + "\nz2:" + z2
+    );
   }
 
   public boolean contains(Location location) {
@@ -47,6 +64,11 @@ public class Cuboid {
         && location.getBlockZ() <= z2;
   }
 
+  public boolean isInChunk(Location location) {
+    Chunk c = chunks.stream().filter(chunk -> chunk.getX() == location.getX() && location.getZ() == location.getZ()).findFirst().orElse(null);
+    return c != null;
+  }
+
   public boolean isOwner(UUID uuid) {
     return owner.equals(uuid);
   }
@@ -56,9 +78,8 @@ public class Cuboid {
    * This is super dangerous and should only be accessed by the administrators <br>
    * You can NOT reverse this action
    */
-
   public void clear() {
-    for(int x = x1; x < x2; x++) {
+    for (int x = x1; x < x2; x++) {
       for (int y = y1; y < y2; y++) {
         for (int z = z1; z < z2; z++) {
           Block block = this.world.getBlockAt(x, y, z);
@@ -69,5 +90,4 @@ public class Cuboid {
       }
     }
   }
-
 }

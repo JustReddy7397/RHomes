@@ -7,7 +7,9 @@ import ga.justreddy.wiki.rhomes.utils.Utils;
 import java.util.Locale;
 import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,9 +17,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
 
 // Setting this off for now.
 public class HomeListener implements Listener {
@@ -27,19 +26,20 @@ public class HomeListener implements Listener {
     Player player = e.getPlayer();
     if (!RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.enabled"))
       return;
-    for (Home h : RHomes.getHomes().getDatabase().getHomes(player)) {
-      if (!h.getUuid().equals(player.getUniqueId().toString())
-          && h.getClaimArea().contains(player.getLocation())) {
-        e.setCancelled(true);
-        Utils.sendMessage(
-            player,
-            RHomes.getHomes()
-                .getMessagesConfig()
-                .getConfig()
-                .getString("protection.block-break")
-                .replaceAll(
-                    "<player>", Bukkit.getOfflinePlayer(UUID.fromString(h.getUuid())).getName()));
-      }
+    for (Home home : RHomes.getHomes().getHomeList()) {
+      UUID owner = UUID.fromString(home.getUuid());
+      if (home.getClaimArea() == null) continue;
+      if (owner.equals(player.getUniqueId())) continue;
+      if (!home.getClaimArea().contains(e.getBlock().getLocation())) continue;
+      e.setCancelled(true);
+      Utils.sendMessage(
+          player,
+          RHomes.getHomes()
+              .getMessagesConfig()
+              .getConfig()
+              .getString("protection.block-break")
+              .replaceAll(
+                  "<player>", Bukkit.getOfflinePlayer(UUID.fromString(home.getUuid())).getName()));
     }
   }
 
@@ -48,34 +48,42 @@ public class HomeListener implements Listener {
     Player player = e.getPlayer();
     if (!RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.enabled"))
       return;
-    for (Home h : RHomes.getHomes().getDatabase().getHomes(player)) {
-      if (!h.getUuid().equals(player.getUniqueId().toString())
-          && h.getClaimArea().contains(player.getLocation())) {
-        e.setCancelled(true);
-        Utils.sendMessage(
-            player,
-            RHomes.getHomes()
-                .getMessagesConfig()
-                .getConfig()
-                .getString("protection.block-place")
-                .replaceAll(
-                    "<player>", Bukkit.getOfflinePlayer(UUID.fromString(h.getUuid())).getName()));
-      }
+    for (Home home : RHomes.getHomes().getHomeList()) {
+      UUID owner = UUID.fromString(home.getUuid());
+      if (home.getClaimArea() == null) continue;
+      if (owner.equals(player.getUniqueId())) continue;
+      if (!home.getClaimArea().contains(e.getBlockPlaced().getLocation())) continue;
+      e.setCancelled(true);
+      Utils.sendMessage(
+          player,
+          RHomes.getHomes()
+              .getMessagesConfig()
+              .getConfig()
+              .getString("protection.block-place")
+              .replaceAll(
+                  "<player>", Bukkit.getOfflinePlayer(UUID.fromString(home.getUuid())).getName()));
     }
   }
 
   @EventHandler
   public void onBlockInteract(PlayerInteractEvent e) {
     if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-
     Player player = e.getPlayer();
     if (!RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.enabled"))
       return;
-    for (Home h : RHomes.getHomes().getDatabase().getHomes(player)) {
-      Location location = player.getLocation();
-      if (h.getClaimArea() == null) continue;
-      if (h.getClaimArea().isOwner(player.getUniqueId())) continue;
-      if (!h.getClaimArea().contains(location)) continue;
+    for (Home home : RHomes.getHomes().getHomeList()) {
+      UUID owner = UUID.fromString(home.getUuid());
+      if (home.getClaimArea() == null) continue;
+      if (owner.equals(player.getUniqueId())) continue;
+      if (!home.getClaimArea().contains(e.getClickedBlock().getLocation())) continue;
+      if (!RHomes.getHomes()
+          .getSettingsConfig()
+          .getConfig()
+          .getStringList("home-protection.interaction-blocks")
+          .contains(
+              XMaterial.matchXMaterial(e.getClickedBlock().getType().name().toUpperCase())
+                  .get()
+                  .name().toUpperCase())) continue;
       e.setCancelled(true);
       Utils.sendMessage(
           player,
@@ -83,10 +91,8 @@ public class HomeListener implements Listener {
               .getMessagesConfig()
               .getConfig()
               .getString("protection.interact")
-              .replaceAll(
-                  "<player>", Bukkit.getOfflinePlayer(UUID.fromString(h.getUuid())).getName())
+              .replaceAll("<player>", Bukkit.getOfflinePlayer(owner).getName())
               .replaceAll("<interaction>", e.getClickedBlock().getType().name().toUpperCase()));
     }
   }
-
 }

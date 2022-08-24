@@ -23,5 +23,7 @@ homes:
     - "<prefix>&aThis action will expire in 10 seconds."
   blacklist-add: "<prefix>&aSuccessfully added <player> to your homes blacklist"
   blacklist-remove: "<prefix>&aSuccessfully removed <player> from your homes blacklist"
+  blacklisted: "<prefix>&cYou've been blacklisted from this home, you can not visit it."
   renamed: "<prefix>&aSuccessfully renamed your home to: <name>"
   renamed-displayname: "<prefix>&aSuccessfully set your homes displayname to: <displayname>"
+  private: "<prefix>&aSuccessfully made your home <private>"

@@ -16,9 +16,11 @@ public interface Database {
 
   void setPrivate(String name, Player player, boolean _private);
 
-  boolean doesHomeExist(String name, Player player);
+  boolean doesHomeExist(String name, OfflinePlayer player);
 
-  void teleportToHome(String name, Player player);
+  boolean isPrivate(String name, OfflinePlayer player);
+
+  void teleportToHome(String name, Player player, OfflinePlayer homeOwner);
 
   void addPlayerToBlackList(String name, Player player, OfflinePlayer target);
 

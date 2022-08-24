@@ -53,6 +53,12 @@ public class EditHomeMenu extends AbstractMenu {
       return;
     }
 
+    if (e.getRawSlot() == 13) {
+      player.closeInventory();
+      new BlackListMenu(name).open(player);
+      return;
+    }
+
 
 
   }
@@ -79,14 +85,24 @@ public class EditHomeMenu extends AbstractMenu {
     ItemMeta displaynameMeta = displayname.getItemMeta();
     displaynameMeta.setDisplayName(Utils.format("&aSet Displayname"));
     List<String> displayNameLore = new ArrayList<>();
-    lore.add("&6%line%");
-    lore.add("&7Click this item set your homes displayname");
-    lore.add("&6%line%");
+    displayNameLore.add("&6%line%");
+    displayNameLore.add("&7Click this item to set your homes displayname");
+    displayNameLore.add("&6%line%");
     displaynameMeta.setLore(Utils.format(displayNameLore));
-    System.out.println(displaynameMeta.getLore());
     displayname.setItemMeta(displaynameMeta);
     inventory.setItem(15, displayname);
-
+    ItemStack blacklist = XMaterial.IRON_BARS.parseItem();
+    ItemMeta blacklistMeta = blacklist.getItemMeta();
+    blacklistMeta.setDisplayName(Utils.format("&aBlackisting"));
+    List<String> blacklistLore = new ArrayList<>();
+    blacklistLore.add("&6%line%");
+    blacklistLore.add("&7Click this item to");
+    lore.add("&7add/remove someone");
+    lore.add("&7from your blacklisted home.");
+    blacklistLore.add("&6%line%");
+    blacklistMeta.setLore(Utils.format(blacklistLore));
+    blacklist.setItemMeta(blacklistMeta);
+    inventory.setItem(13, blacklist);
 
 
   }

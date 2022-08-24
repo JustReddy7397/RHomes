@@ -60,13 +60,18 @@ public class MongoDB implements Database {
   }
 
   @Override
-  public boolean doesHomeExist(String name, Player player) {
+  public boolean doesHomeExist(String name, OfflinePlayer player) {
     Document document = collection.find(new Document("uuid", name).append("uuid", player.getUniqueId().toString())).first();
     return document != null;
   }
 
   @Override
-  public void teleportToHome(String name, Player player) {
+  public boolean isPrivate(String name, OfflinePlayer player) {
+    return false;
+  }
+
+  @Override
+  public void teleportToHome(String name, Player player, OfflinePlayer homeOwner) {
     if (!doesHomeExist(name, player)) {
       Utils.sendMessage(player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
       return;

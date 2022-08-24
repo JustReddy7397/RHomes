@@ -1,5 +1,9 @@
 
-# Available storage types: sql | mysql | mongodb
+# Available storage types:
+# sql ( recommend )
+# mysql ( for cross server storage )
+# mongodb ( recommended too )
+# yaml ( Recommended if u want to edit homes via your file manager )
 storage: sql
 
 mongo:
