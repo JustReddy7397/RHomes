@@ -1,10 +1,10 @@
 home-protection:
   enabled: true
   pvp-inverted: true # If true, the homeowner can attack anyone who is in their home, while the other person can't, if false, both can't attack each other
-  interaction-blocks: # The blocks ( chests, trapdoors, doors etc ) you don't want the player to mess with.
+  interaction-blocks: # The blocks ( chests, trapdoors, doors etc. ) you don't want the player to mess with.
     - CHEST
     - IRON_TRAPDOOR
-    - TRAP_DOOR
+    - ACACIA_TRAPDOOR # For some reason this is an oak trapdoor in 1.8 lol
     - OAK_DOOR
     - ACACIA_DOOR
     - BIRCH_DOOR

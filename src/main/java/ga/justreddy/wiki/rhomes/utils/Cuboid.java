@@ -49,10 +49,6 @@ public class Cuboid {
         }
       }
     }
-    System.out.println(
-
-        "x1: " + x1 + "\ny1:" + y1 + "\nz1:" + z1 +  "x2: " + x2 + "\ny2:" + y2 + "\nz2:" + z2
-    );
   }
 
   public boolean contains(Location location) {
