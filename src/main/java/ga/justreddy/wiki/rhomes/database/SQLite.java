@@ -1,5 +1,6 @@
 package ga.justreddy.wiki.rhomes.database;
 
+import com.cryptomorin.xseries.XMaterial;
 import ga.justreddy.wiki.rhomes.utils.Cuboid;
 import ga.justreddy.wiki.rhomes.utils.Utils;
 import ga.justreddy.wiki.rhomes.RHomes;
@@ -170,8 +171,10 @@ public class SQLite implements Database {
             .getConfig()
             .getString("homes.private")
             .replaceAll("<private>", (_private ? "private" : "public")));
+
     Home home =
         RHomes.getHomes().getHomeList().stream()
+            .filter(h -> h.getUuid().equals(player.getUniqueId().toString()))
             .filter(h -> h.getName().equals(name))
             .findFirst()
             .get();
@@ -239,7 +242,11 @@ public class SQLite implements Database {
     }
 
     if (isPrivate(name, homeOwner) && !rs.getString("uuid").equals(player.getUniqueId().toString())) {
-      // TODO
+      Utils.sendMessage(player,
+          RHomes.getHomes().getMessagesConfig()
+              .getConfig()
+              .getString("error.private")
+      );
       return;
     }
     Location location = Utils.getLocation(rs.getString("location"));
@@ -373,14 +380,13 @@ public class SQLite implements Database {
                 + "' AND uuid='"
                 + player.getUniqueId().toString()
                 + "'");
-
     Utils.sendMessage(
         player, RHomes.getHomes().getMessagesConfig().getConfig().getString("homes.renamed").replaceAll("<name>", newName));
     Home home =
         RHomes.getHomes().getHomeList().stream()
-            .filter(h -> h.getName().equals(name))
-            .findFirst()
-            .get();
+            .filter(h -> h.getUuid().equals(player.getUniqueId().toString()) && h.getName().equals(name))
+            .findFirst().get();
+
     home.setName(newName);
   }
 
@@ -408,9 +414,8 @@ public class SQLite implements Database {
         player, RHomes.getHomes().getMessagesConfig().getConfig().getString("homes.renamed-displayname").replaceAll("<displayname>", newDisplayName));
     Home home =
         RHomes.getHomes().getHomeList().stream()
-            .filter(h -> h.getName().equals(name))
-            .findFirst()
-            .get();
+            .filter(h -> h.getUuid().equals(player.getUniqueId().toString()) && h.getName().equals(name))
+            .findFirst().get();
     home.setDisplayName(newDisplayName);
   }
 
