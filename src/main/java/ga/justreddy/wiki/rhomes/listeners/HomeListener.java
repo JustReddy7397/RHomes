@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.Queues;
 import ga.justreddy.wiki.rhomes.RHomes;
 import ga.justreddy.wiki.rhomes.database.Home;
+import ga.justreddy.wiki.rhomes.utils.Cuboid;
 import ga.justreddy.wiki.rhomes.utils.Utils;
 import java.util.AbstractQueue;
 import java.util.ArrayDeque;
@@ -111,7 +112,7 @@ public class HomeListener implements Listener {
   @EventHandler
   public void onEntityDamage(EntityDamageEvent e) {
 
-    if (!RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.enabled"))
+    if (!RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.enabled") || !RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.pvp.enabled"))
       return;
 
     if (e.getCause() != DamageCause.ENTITY_ATTACK) return;
@@ -124,7 +125,7 @@ public class HomeListener implements Listener {
       if (home.getClaimArea() == null) continue;
       if (!home.getClaimArea().contains(player.getLocation())) continue;
 
-      if (home.getUuid().equals(player.getUniqueId().toString()) && RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.pvp-inverted")) {
+      if (home.getUuid().equals(player.getUniqueId().toString()) && RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.pvp.pvp-inverted")) {
         e.setCancelled(true);
       }
 

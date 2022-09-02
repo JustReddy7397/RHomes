@@ -1,5 +1,5 @@
 name: RHomes
-version: '${project.version}'
+version: 1.0.0
 main: ga.justreddy.wiki.rhomes.RHomes
 authors: [ JustReddy ]
 description: Home Plugin
