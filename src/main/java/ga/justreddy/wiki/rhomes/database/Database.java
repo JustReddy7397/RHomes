@@ -36,6 +36,8 @@ public interface Database {
 
   void setClaimArea(String name, Player player);
 
+  boolean areBoundariesSet(String name, Player player);
+
   Home getHomeByName(String name, Player player);
 
   List<Home> getHomes(Player player);

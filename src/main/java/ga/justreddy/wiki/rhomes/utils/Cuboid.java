@@ -69,6 +69,14 @@ public class Cuboid {
     return owner.equals(uuid);
   }
 
+  public boolean test() {
+    if (highPoints.distance(lowPoints) > 5) {
+
+      return true;
+    }
+    return false;
+  }
+
   /**
    * This method is used to clear everything in the cuboid <br>
    * This is super dangerous and should only be accessed by the administrators <br>

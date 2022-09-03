@@ -29,6 +29,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 // Setting this off for now.
 public class HomeListener implements Listener {
@@ -79,8 +80,8 @@ public class HomeListener implements Listener {
 
   @EventHandler
   public void onBlockInteract(PlayerInteractEvent e) {
-    if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
     Player player = e.getPlayer();
+    if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
     if (!RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.enabled"))
       return;
     for (Home home : RHomes.getHomes().getHomeList()) {
@@ -132,22 +133,4 @@ public class HomeListener implements Listener {
     }
 
   }
-
-  /*  @EventHandler
-  public void onEntityDamage(EntityDamageByEntityEvent e) {
-    if (!RHomes.getHomes().getSettingsConfig().getConfig().getBoolean("home-protection.enabled"))
-      return;
-
-    if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
-      final Player player = (Player) e.getEntity();
-      final Player damager = (Player) e.getDamager();
-      for (Home home : RHomes.getHomes().getHomeList()) {
-        UUID owner = UUID.fromString(home.getUuid());
-        if (home.getClaimArea() == null) continue;
-        if (owner.equals(player.getUniqueId())) continue;
-        if (!home.getClaimArea().contains(player.getLocation())) continue;
-        // TODO
-      }
-    }
-  }*/
 }

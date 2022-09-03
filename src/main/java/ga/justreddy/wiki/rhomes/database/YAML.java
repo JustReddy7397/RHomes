@@ -21,6 +21,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import sun.security.provider.certpath.CertId;
 
 public class YAML implements Database {
 
@@ -336,19 +337,59 @@ public class YAML implements Database {
     home.setDisplayName(newDisplayName);
   }
 
+  @SneakyThrows
   @Override
   public void setHighBound(String name, Player player, String highBound) {
+    if (!doesHomeExist(name, player)) {
+      Utils.sendMessage(
+          player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
+      return;
+    }
+
+    FileConfiguration config = getConfigByFile(player.getUniqueId().toString());
+    config.set("homes." + name + ".highbound", highBound);
+    config.save(getHomeByFile(player.getUniqueId().toString()));
+    player.sendMessage("Highbound set");
 
   }
 
+  @SneakyThrows
   @Override
   public void setLowBound(String name, Player player, String lowBound) {
+    if (!doesHomeExist(name, player)) {
+      Utils.sendMessage(
+          player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
+      return;
+    }
 
+    FileConfiguration config = getConfigByFile(player.getUniqueId().toString());
+    config.set("homes." + name + ".lowbound", lowBound);
+    config.save(getHomeByFile(player.getUniqueId().toString()));
+    player.sendMessage("Lowbound set");
   }
 
   @Override
   public void setClaimArea(String name, Player player) {
+    if (!doesHomeExist(name, player)) {
+      Utils.sendMessage(
+          player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
+      return;
+    }
+    if (!areBoundariesSet(name, player)) {
+      System.out.println("Boundaries not set!!!");
+      return;
+    }
+    FileConfiguration config = getConfigByFile(player.getUniqueId().toString());
+    Location highbound = Utils.getLocation(config.getString("homes." + name + ".highbound"));
+    Location lowbound = Utils.getLocation(config.getString("homes." + name + ".lowbound"));
+    Cuboid cuboid = new Cuboid(player.getUniqueId(), highbound, lowbound);
+    if (cuboid.test()) return;
+  }
 
+  @Override
+  public boolean areBoundariesSet(String name, Player player) {
+    FileConfiguration config = getConfigByFile(player.getUniqueId().toString());
+    return config.isSet("homes." + name + ".highbound") && config.isSet("homes." + name + ".lowbound");
   }
 
   @Override

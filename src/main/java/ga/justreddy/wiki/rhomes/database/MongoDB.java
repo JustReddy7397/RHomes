@@ -122,6 +122,11 @@ public class MongoDB implements Database {
   }
 
   @Override
+  public boolean areBoundariesSet(String name, Player player) {
+    return false;
+  }
+
+  @Override
   public Home getHomeByName(String name, Player player) {
     return null;
   }

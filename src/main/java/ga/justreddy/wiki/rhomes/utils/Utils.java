@@ -18,7 +18,7 @@ import org.bukkit.util.Vector;
 public class Utils {
 
   private Utils() {}
-
+  private static final int CENTER_PX = 154;
   public static final String CHAT_LINE = "&m-----------------------------------------------------";
   public static final String CONSOLE_LINE =
       "*-----------------------------------------------------*";
@@ -49,6 +49,45 @@ public class Utils {
       sendMessage(sender, line);
     }
   }
+  public static String getCenteredMessage(String message) {
+    if (message == null || message.equals("")) return "";
+
+    message = format(message);
+    message = message.replace("<center>", "").replace("</center>", "");
+
+    int messagePxSize = 0;
+    boolean previousCode = false;
+    boolean isBold = false;
+
+    for (char c : message.toCharArray()) {
+      if (c == '�') {
+        previousCode = true;
+
+      } else if (previousCode) {
+        previousCode = false;
+        isBold = c == 'l' || c == 'L';
+
+      } else {
+        DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
+        messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
+        messagePxSize++;
+      }
+    }
+
+    int halvedMessageSize = messagePxSize / 2;
+    int toCompensate = CENTER_PX - halvedMessageSize;
+    int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
+    int compensated = 0;
+    StringBuilder sb = new StringBuilder();
+    while (compensated < toCompensate) {
+      sb.append(" ");
+      compensated += spaceLength;
+    }
+
+    return sb + message;
+
+  }
+
 
   public static void error(Throwable throwable, String description, boolean disable) {
     if (throwable != null) throwable.printStackTrace();

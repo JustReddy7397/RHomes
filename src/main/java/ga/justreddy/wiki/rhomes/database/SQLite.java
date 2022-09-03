@@ -478,6 +478,11 @@ public class SQLite implements Database {
   }
 
   @Override
+  public boolean areBoundariesSet(String name, Player player) {
+    return false;
+  }
+
+  @Override
   public Home getHomeByName(String name, Player player) {
     return getHomes(player).stream().filter(home1 -> home1.getName().equals(name)).findFirst().orElse(null);
   }

@@ -4,10 +4,11 @@ import ga.justreddy.wiki.rhomes.RHomes;
 import ga.justreddy.wiki.rhomes.command.commands.CreateCommand;
 import ga.justreddy.wiki.rhomes.command.commands.DeleteCommand;
 import ga.justreddy.wiki.rhomes.command.commands.EditCommand;
+import ga.justreddy.wiki.rhomes.command.commands.HelpCommand;
 import ga.justreddy.wiki.rhomes.command.commands.ReloadCommand;
 import ga.justreddy.wiki.rhomes.command.commands.SetPrivateCommand;
 import ga.justreddy.wiki.rhomes.command.commands.TeleportCommand;
-import ga.justreddy.wiki.rhomes.command.commands.TestCommand;
+import ga.justreddy.wiki.rhomes.command.commands.BoundaryCommand;
 import ga.justreddy.wiki.rhomes.command.commands.VisitCommand;
 import ga.justreddy.wiki.rhomes.utils.Utils;
 import java.util.ArrayList;
@@ -26,7 +27,15 @@ public class BaseCommand implements TabExecutor {
   @Getter private static final List<ICommand> commands = new ArrayList<>();
 
   public BaseCommand() {
-    addCommands(new CreateCommand(), new DeleteCommand(), new TeleportCommand(), new SetPrivateCommand(), new EditCommand(), new VisitCommand(), new ReloadCommand(), new TestCommand());
+    addCommands(new CreateCommand(),
+        new DeleteCommand(),
+        new TeleportCommand(),
+        new SetPrivateCommand(),
+        new EditCommand(),
+        new VisitCommand(),
+        new ReloadCommand(),
+        new BoundaryCommand(),
+        new HelpCommand());
     for (ICommand command : commands) {
       if (command.permission() != null && Bukkit.getPluginManager().getPermission(command.permission()) == null) {
         Bukkit.getPluginManager().addPermission(new Permission(command.permission()));
@@ -72,6 +81,7 @@ public class BaseCommand implements TabExecutor {
     if (args.length == 1) {
       List<String> list = new ArrayList<>();
       for (ICommand cmd : commands) {
+        if (cmd.permission() == null) list.add(cmd.name());
         if (list.contains(cmd.name()) || !player.hasPermission(cmd.permission())) continue;
         list.add(cmd.name());
       }
