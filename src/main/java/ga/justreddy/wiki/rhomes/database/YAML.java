@@ -5,14 +5,19 @@ import ga.justreddy.wiki.rhomes.utils.Cuboid;
 import ga.justreddy.wiki.rhomes.utils.Utils;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -26,7 +31,6 @@ public class YAML implements Database {
     if (!folder.exists()) folder.mkdir();
   }
 
-  @SneakyThrows
   @Override
   public void loadData() {
     File[] files = folder.listFiles();
@@ -38,33 +42,32 @@ public class YAML implements Database {
 /*      config.set("name", Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName());
       config.save(file);*/
       ConfigurationSection configurationSection = config.getConfigurationSection("homes");
-      for (String key : configurationSection.getKeys(false)) {
-        ConfigurationSection section = configurationSection.getConfigurationSection(key);
-        String highBound = section.getString("highbound");
-        String lowBound = section.getString("lowbound");
+        for (String key : configurationSection.getKeys(false)) {
+          ConfigurationSection section = configurationSection.getConfigurationSection(key);
+          String highBound = section.getString("highbound");
+          String lowBound = section.getString("lowbound");
 
-        Cuboid cuboid = null;
+          Cuboid cuboid = null;
 
-        if (highBound != null && lowBound != null) {
-          Location highBoundLocation = Utils.getLocation(highBound);
-          Location lowBoundLocation = Utils.getLocation(lowBound);
-          cuboid = new Cuboid(UUID.fromString(uuid), highBoundLocation, lowBoundLocation);
+          if (highBound != null && lowBound != null) {
+            Location highBoundLocation = Utils.getLocation(highBound);
+            Location lowBoundLocation = Utils.getLocation(lowBound);
+            cuboid = new Cuboid(UUID.fromString(uuid), highBoundLocation, lowBoundLocation);
+          }
+
+          Home home = new Home(
+              key,
+              section.getString("displayname"),
+              uuid,
+              section.getString("location"),
+              section.getBoolean("private"),
+              section.getLong("created")
+          );
+
+          home.setClaimArea(cuboid);
+          RHomes.getHomes().getHomeList().add(home);
         }
 
-        Home home = new Home(
-            section.getString("name"),
-            section.getString("displayname"),
-            uuid,
-            section.getString("location"),
-            section.getBoolean("private"),
-            section.getLong("created")
-        );
-
-        home.setClaimArea(cuboid);
-
-        RHomes.getHomes().getHomeList().add(home);
-
-      }
     }
   }
 
@@ -160,7 +163,7 @@ public class YAML implements Database {
   @Override
   public boolean isPrivate(String name, OfflinePlayer player) {
     if (!doesHomeExist(name, player)) return true;
-    return RHomes.getHomes().getHomeList().stream().filter(home -> home.getName().equals(name)).anyMatch(Home::isPrivate);
+    return RHomes.getHomes().getHomeList().stream().filter(home -> home.getName().equals(name) && home.getUuid().equals(player.getUniqueId().toString())).anyMatch(Home::isPrivate);
   }
 
   @Override
@@ -296,24 +299,41 @@ public class YAML implements Database {
           player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
       return;
     }
-
     FileConfiguration configuration = getConfigByFile(player.getUniqueId().toString());
-    configuration.set("homes." + name + ".name", newName);
+      for (Map.Entry<String, Object> entry : configuration.getConfigurationSection("homes." + name).getValues(true).entrySet()) {
+        configuration.set("homes." + newName + "." + entry.getKey(), entry.getValue());
+    }
+    configuration.set("homes." + name, null);
     configuration.save(getHomeByFile(player.getUniqueId().toString()));
-
     Utils.sendMessage(
         player, RHomes.getHomes().getMessagesConfig().getConfig().getString("homes.renamed").replaceAll("<name>", newName));
     Home home =
         RHomes.getHomes().getHomeList().stream()
             .filter(h -> h.getUuid().equals(player.getUniqueId().toString()) && h.getName().equals(name))
                 .findFirst().get();
-
+    System.out.println(home);
     home.setName(newName);
   }
 
+  @SneakyThrows
   @Override
   public void setDisplayName(String name, Player player, String newDisplayName) {
-
+    if (!doesHomeExist(name, player)) {
+      Utils.sendMessage(
+          player, RHomes.getHomes().getMessagesConfig().getConfig().getString("error.not-exists"));
+      return;
+    }
+    FileConfiguration configuration = getConfigByFile(player.getUniqueId().toString());
+    configuration.set("homes." + name + ".displayname", newDisplayName);
+    configuration.save(getHomeByFile(player.getUniqueId().toString()));
+    Utils.sendMessage(
+        player, RHomes.getHomes().getMessagesConfig().getConfig().getString("homes.renamed-displayname").replaceAll("<displayname>", newDisplayName));
+    Home home =
+        RHomes.getHomes().getHomeList().stream()
+            .filter(h -> h.getUuid().equals(player.getUniqueId().toString()) && h.getName().equals(name))
+            .findFirst().get();
+    System.out.println(home);
+    home.setDisplayName(newDisplayName);
   }
 
   @Override
@@ -333,32 +353,25 @@ public class YAML implements Database {
 
   @Override
   public Home getHomeByName(String name, Player player) {
-    return null;
+    return RHomes.getHomes().getHomeList().stream()
+        .filter(home -> home.getUuid().equals(player.getUniqueId().toString()) && home.getName().equals(name)).findFirst().orElse(null);
   }
 
   @Override
   public List<Home> getHomes(Player player) {
-    List<Home> homeList = new ArrayList<>();
-    FileConfiguration config = getConfigByFile(player.getUniqueId().toString());
-    ConfigurationSection configurationSection = config.getConfigurationSection("homes");
-    for (String key : configurationSection.getKeys(false)) {
-      ConfigurationSection section = configurationSection.getConfigurationSection(key);
-      Home home =
-          new Home(
-              section.getString("name"),
-              section.getString("displayname"),
-              player.getUniqueId().toString(),
-              section.getString("location"),
-              section.getBoolean("private"),
-              section.getLong("created"));
-      homeList.add(home);
-      }
-      return homeList;
+    return RHomes.getHomes().getHomeList()
+        .stream().filter(home -> home.getUuid().equals(player.getUniqueId().toString())).collect(
+            Collectors.toList());
   }
 
   @Override
   public List<UUID> getBlacklisted(String name, Player player) {
-    return null;
+    List<UUID> blacklisted = new ArrayList<>();
+    FileConfiguration configuration = getConfigByFile(player.getUniqueId().toString());
+    for (String uuid : configuration.getStringList("homes." + name + ".blacklisted")) {
+      blacklisted.add(UUID.fromString(uuid));
+    }
+    return blacklisted;
   }
 
   private File getHomeByFile(String uuid) {

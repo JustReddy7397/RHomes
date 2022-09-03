@@ -97,8 +97,8 @@ public class EditHomeMenu extends AbstractMenu {
     List<String> blacklistLore = new ArrayList<>();
     blacklistLore.add("&6%line%");
     blacklistLore.add("&7Click this item to");
-    lore.add("&7add/remove someone");
-    lore.add("&7from your blacklisted home.");
+    blacklistLore.add("&7add/remove someone");
+    blacklistLore.add("&7from your blacklisted home.");
     blacklistLore.add("&6%line%");
     blacklistMeta.setLore(Utils.format(blacklistLore));
     blacklist.setItemMeta(blacklistMeta);

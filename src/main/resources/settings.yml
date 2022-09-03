@@ -1,4 +1,4 @@
-home-protection:
+home-protection: # This is not very advanced, so you can disable it if you want.
   enabled: true
   pvp:
     enabled: true # If true, players can pvp in homes, see below for details.
